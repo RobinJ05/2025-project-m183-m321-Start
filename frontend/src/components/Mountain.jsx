@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import './mountain.css';
 import mountainService from '../services/mountainService';
+import AuthService from '../services/authenticationService';
 
 const Mountain = ({ selectedMountain }) => {
     const [formData, setFormData] = useState({
@@ -39,7 +40,9 @@ const Mountain = ({ selectedMountain }) => {
             try {
                 const success = await mountainService.deleteMountain(formData.id);
                 if (success) {
-                    window.location.href = '/home';
+                    await AuthService.updateToken(() => {
+                window.location.href = '/home';
+            });
                 }
             } catch (error) {
                 console.error('Error deleting mountain:', error);
@@ -83,7 +86,9 @@ const Mountain = ({ selectedMountain }) => {
                 image: null
             });
 
-            window.location.href = '/home';
+            await AuthService.updateToken(() => {
+                window.location.href = '/home';
+            });
         } catch (error) {
             console.error('Error saving mountain:', error);
             alert('Fehler beim Speichern des Berges');
