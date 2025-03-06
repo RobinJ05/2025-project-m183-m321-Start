@@ -87,4 +87,20 @@ async function uploadMountainImage(mntId, imageFile) {
   }
 }
 
-export default { loadMountainList, loadMountain, createMountain, updateMountain, uploadMountainImage };
+async function deleteMountain(mountainId) {
+  try {
+    let token = AuthService.getToken();
+    await axios.delete(`${backendHost}/mnts/${mountainId}`, { 
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return true;
+  } catch (err) {
+    alert(err.message, "error");
+    return false;
+  }
+}
+
+export default { loadMountainList, loadMountain, createMountain, updateMountain, uploadMountainImage, deleteMountain };

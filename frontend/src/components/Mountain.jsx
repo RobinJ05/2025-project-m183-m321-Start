@@ -34,6 +34,20 @@ const Mountain = ({ selectedMountain }) => {
         }
     };
 
+    const handleDelete = async () => {
+        if (window.confirm('Sind Sie sicher, dass Sie diesen Berg löschen möchten?')) {
+            try {
+                const success = await mountainService.deleteMountain(formData.id);
+                if (success) {
+                    window.location.href = '/home';
+                }
+            } catch (error) {
+                console.error('Error deleting mountain:', error);
+                alert('Fehler beim Löschen des Berges');
+            }
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -78,6 +92,24 @@ const Mountain = ({ selectedMountain }) => {
 
     return (
         <form className="mountain-form" onSubmit={handleSubmit}>
+            {formData.id && (
+                <button
+                    type="button"
+                    onClick={handleDelete}
+                    className="delete-button"
+                    style={{
+                        backgroundColor: '#ff4444',
+                        color: 'white',
+                        padding: '10px 20px',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        marginBottom: '20px'
+                    }}
+                >
+                    Berg löschen
+                </button>
+            )}
             <input
                 type="text"
                 name="name"
