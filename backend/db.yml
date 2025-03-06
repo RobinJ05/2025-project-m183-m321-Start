@@ -1,0 +1,22 @@
+services:  
+  db:
+    image: mysql:8
+    platform: linux/amd64
+    container_name: 2025-mnts-db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=2025-mnts
+      - MYSQL_TCP_PORT=3306
+    volumes:
+      - ../database-content:/var/lib/mysql   
+      # Mount SQL script schema-sampledata.sql: All scripts in this container directory are executed automatically 
+      # when the container is created
+      # the database-directory must be empty in order to execute the script
+      - ./sql:/docker-entrypoint-initdb.d  
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8087:8080   

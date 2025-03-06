@@ -1,0 +1,37 @@
+{
+  "name": "2025-mnts-backend",
+  "version": "1.0.0",
+  "description": "Backend for mountain gallery",
+  "main": "api.js",
+  "scripts": {
+    "test": "newman run testing/collection.json -e testing/env.json",
+    "start": "nodemon api.js",
+    "backendup": "docker-compose -f backend.yml up -d",
+    "dbup": "docker compose -f db.yml up -d",
+    "backenddown": "docker-compose -f backend.yml down",
+    "dbdown": "docker-compose -f db.yml down",
+    "kcup": "docker compose -f keycloak-admin.yml up -d"
+  },
+  "author": "Martin Hager",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.13"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-session": "^1.18.1",
+    "glob": "^8.0.3",
+    "jsonwebtoken": "^8.5.1",
+    "keycloak-connect": "^26.1.1",
+    "memorystore": "^1.6.7",
+    "multer": "^1.4.3",
+    "mysql2": "^2.3.0",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "sequelize": "^6.7.0",
+    "winston": "^3.3.3"
+  }
+}

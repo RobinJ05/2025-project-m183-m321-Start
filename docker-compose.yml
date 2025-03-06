@@ -1,0 +1,47 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    container_name: 2025-mnts-frontend
+    ports:
+      - 5173:5173
+    environment:
+      - VITE_HOST=0.0.0.0  # noetig fuer Zugriff auf den Container
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    container_name: 2025-mnts-backend
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_DBDIALECT=mysql
+      - NODE_DBHOST=host.docker.internal
+      - NODE_DBPORT=3306
+      - NODE_DBUSER=root
+      - NODE_DBPWD=root
+      - NODE_DBSCHEMA=2025-mnts
+      - NODE_DBSYNC=true
+      - NODE_HOST=http://localhost:3000
+  db:
+    image: mysql:8
+    platform: linux/amd64
+    container_name: 2025-mnts-db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=2025-mnts
+      - MYSQL_TCP_PORT=3306
+    volumes:
+      - ./database-content:/var/lib/mysql   
+      # Mount SQL script schema-sampledata.sql: All scripts in this container directory are executed automatically 
+      # when the container is created
+      # the database-directory must be empty in order to execute the script
+      - ./sql:/docker-entrypoint-initdb.d  
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8087:8080   

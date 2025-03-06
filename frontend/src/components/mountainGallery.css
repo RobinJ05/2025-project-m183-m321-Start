@@ -1,0 +1,85 @@
+.mountain-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(300px, 1fr)
+    ); /* Responsive columns */
+    gap: 10px; /* Space between cards */
+    padding: 10px;
+}
+
+.mountain-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 12px; /* Reduced padding to make cards smaller */
+    background-color: #fff;
+    text-align: center;
+}
+
+.mountain-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.mountain-image {
+    width: 100%; /* Take full width of the parent */
+    height: 300px; /* Set a fixed height for the image */
+    object-fit: cover; /* Ensure the image scales proportionally and fills the height */
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.mountain-elevation,
+.mountain-coordinates,
+.mountain-railway {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 4px 0;
+}
+
+.mountain-coordinates {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.mountain-railway {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.mountain-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+    margin: 20px auto 0;
+}
+
+.mountain-form input {
+    padding: 10px;
+    font-size: 16px;
+}
+
+.mountain-form button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.mountain-form button:hover {
+    background-color: #111;
+}
+
+@media (prefers-color-scheme: dark) {
+    .mountain-card {
+        color: #000;
+    }
+}

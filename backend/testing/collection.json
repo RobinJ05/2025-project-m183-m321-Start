@@ -1,0 +1,1890 @@
+{
+	"info": {
+		"_postman_id": "3de9b91c-c723-4408-ab15-8f3cbe388a07",
+		"name": "2021-mnts-backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get-avatars - localhost:3000/avatars",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET /avatars - status\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const avatars = pm.response.json();",
+							"const avatar01Url = avatars[0];",
+							"const avatar01 = avatar01Url.substring(avatar01Url.lastIndexOf(\"/\")+1);",
+							"const avatar12Url = avatars[11];",
+							"const avatar12 = avatar12Url.substring(avatar12Url.lastIndexOf(\"/\")+1);",
+							"pm.test(\"GET /avatars - response\", () => {",
+							"  pm.expect(avatar01).to.eql(\"avatar01.svg\");",
+							"  pm.expect(avatar12).to.eql(\"avatar12.svg\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/avatars",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"avatars"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add-user - localhost:3000/users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"POST /users - status\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"const avatarUrl = res.avatar;",
+							"const avatar = avatarUrl.substring(avatarUrl.lastIndexOf(\"/\")+1);",
+							"pm.environment.set(\"user_6_id\", res.id);",
+							"pm.test(\"POST /users - response\", () => {",
+							"  pm.expect(res.username).to.eql(pm.environment.get(\"user_6_username\"));",
+							"  pm.expect(res.firstname).to.eql(pm.environment.get(\"user_6_firstname\"));",
+							"  pm.expect(res.lastname).to.eql(pm.environment.get(\"user_6_lastname\"));",
+							"  pm.expect(avatar).to.eql(pm.environment.get(\"user_6_avatar\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"username6 = pm.environment.get(\"user_6_username\");",
+							"",
+							"const getreq = {",
+							"    url: `http://localhost:3000/users?username=${username6}`,",
+							"    method: \"GET\"",
+							"}",
+							"",
+							"pm.sendRequest(getreq, (geterr, getres) => {",
+							"    if (geterr) {",
+							"        console.log(`Error of get request: ${geterr}`);",
+							"    } else {",
+							"        if (getres.json()[0] && getres.json()[0].id) {",
+							"            const id = getres.json()[0].id;",
+							"            const req = {",
+							"                url: `localhost: 3000/users/${id}`,",
+							"                method: \"DELETE\",",
+							"            };",
+							"            pm.sendRequest(req, (delerr, delres) => {",
+							"                if (delerr) {",
+							"                    console.log(`Error of delete request: ${delerr}`);",
+							"                }",
+							"            });",
+							"        }",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{user_6_username}}\",\n    \"pwd\": \"{{user_6_pwd}}\",\n    \"firstname\": \"{{user_6_firstname}}\",\n    \"lastname\": \"{{user_6_lastname}}\",\n    \"avatar\": \"{{user_6_avatar}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/users",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add-existing-user - localhost:3000/users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"POST /users - user exists - status\", () => {",
+							"    pm.response.to.have.status(409);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"POST /users - user exitst -  response\", () => {",
+							"  pm.expect(res.errorMessage).to.eql(pm.environment.get(\"signup_fail\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{user_6_username}}\",\n    \"pwd\": \"{{user_6_pwd}}\",\n    \"firstname\": \"{{user_6_firstname}}\",\n    \"lastname\": \"{{user_6_lastname}}\",\n    \"avatar\": \"{{user_6_avatar}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/users",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete-existing-user localhost:3000/users/6",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Delete /users - status\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"DELETE /users - response\", () => {",
+							"  pm.expect(res.usersDeleted).to.eql(1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/users/{{user_6_id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"{{user_6_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete-nonexisting-user localhost:3000/users/6",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Delete /users - status\", () => {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"DELETE /users - response\", () => {",
+							"  pm.expect(res.usersDeleted).to.eql(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/users/{{user_6_id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"{{user_6_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-users-by-id - localhost:3000/users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET /users - by id - status\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const user = pm.response.json();",
+							"const avatarUrl = user.avatar;",
+							"const avatar = avatarUrl.substring(avatarUrl.lastIndexOf(\"/\")+1);",
+							"pm.test(\"GET /users - by id - response\", () => {",
+							"  pm.expect(user.username).to.eql(pm.environment.get(\"user_5_username\"));",
+							"  pm.expect(user.firstname).to.eql(pm.environment.get(\"user_5_firstname\"));",
+							"  pm.expect(user.lastname).to.eql(pm.environment.get(\"user_5_lastname\"));",
+							"  pm.expect(avatar).to.eql(pm.environment.get(\"user_5_avatar\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/users/{{user_5_id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"{{user_5_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-users-by-invalid-id - localhost:3000/users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET /users - by nvalid id - status\", () => {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"GET /users - by invalid ids - response\", () => {",
+							"  pm.expect(res).to.be.empty;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/users/0",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "filter-users-by-valid-attribute - localhost:3000/users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET /users - filter by valid attribute - status\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"const user = res[0];",
+							"const avatarUrl = user.avatar;",
+							"const avatar = avatarUrl.substring(avatarUrl.lastIndexOf(\"/\")+1);",
+							"pm.test(\"GET /users - by valid attribute - response\", () => {",
+							"  pm.expect(user.username).to.eql(pm.environment.get(\"user_1_username\"));",
+							"  pm.expect(user.firstname).to.eql(pm.environment.get(\"user_1_firstname\"));",
+							"  pm.expect(user.lastname).to.eql(pm.environment.get(\"user_1_lastname\"));",
+							"  pm.expect(avatar).to.eql(pm.environment.get(\"user_1_avatar\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/users?firstname={{user_1_firstname}}&lastname={{user_1_lastname}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "firstname",
+							"value": "{{user_1_firstname}}"
+						},
+						{
+							"key": "lastname",
+							"value": "{{user_1_lastname}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "filter-non-existing-user - localhost:3000/users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET /users - non existing user - status\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"GET /users - non existing user - response\", () => {",
+							"  pm.expect(res.length).to.eql(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/users?firstname={{user_1_firstname}}&lastname={{user_2_lastname}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "firstname",
+							"value": "{{user_1_firstname}}"
+						},
+						{
+							"key": "lastname",
+							"value": "{{user_2_lastname}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "filter-users-by-unkown-column - localhost:3000/users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET /users - filter by invalid attribute - status\", () => {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"GET /users - filter invalid attribute - response\", () => {",
+							"  pm.expect(res.errorMessage).to.eql(pm.environment.get(\"invalid_query\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/users?rubish={{user_1_firstname}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "rubish",
+							"value": "{{user_1_firstname}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-public-mountains-by-id - /mnts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET /mnts/<id> - status\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"GET /mnts/<id> - response\", () => {",
+							"  pm.expect(res.properties.name).to.eql(pm.environment.get(\"mnt7_name\"));",
+							"  pm.expect(res.properties.el.toString()).to.eql(pm.environment.get(\"mnt7_elevation\"));",
+							"  pm.expect(res.properties.mountainrailway.toString()).to.eql(pm.environment.get(\"mnt7_hasmountainrailway\"));",
+							"  pm.expect(res.geometry.coordinates[0].toString()).to.eql(pm.environment.get(\"mnt7_longitude\"));",
+							"  pm.expect(res.geometry.coordinates[1].toString()).to.eql(pm.environment.get(\"mnt7_latitude\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/mnts/{{mnt7_id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"mnts",
+						"{{mnt7_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-public-non-existing-mountain - /users/<iuserd>/mnts/<mntid>",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET /mnts/<id> - non-exisisting-mountain - status\", () => {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"GET /mnts/<id> - - non-exisisting-mountain - non-exisisting-mountain -response\", () => {",
+							"  pm.expect(res).to.be.empty;",
+							"  ",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/mnts/{{mnt14_id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"mnts",
+						"{{mnt14_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add-mountain - /mnts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"POST /mnts - status\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.environment.set(\"mnt0_id\", res.properties.id);",
+							"pm.test(\"POST /mnts - response\", () => {",
+							"  pm.expect(res.properties.name).to.eql(pm.environment.get(\"mnt0_name\"));",
+							"  pm.expect(res.properties.el.toString()).to.eql(pm.environment.get(\"mnt0_elevation\"));",
+							"  pm.expect(res.properties.mountainrailway.toString()).to.eql(pm.environment.get(\"mnt0_hasmountainrailway\"));",
+							"  pm.expect(res.geometry.coordinates[0].toString()).to.eql(pm.environment.get(\"mnt0_longitude\"));",
+							"  pm.expect(res.geometry.coordinates[1].toString()).to.eql(pm.environment.get(\"mnt0_latitude\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{mnt0_name}}\",\n    \"elevation\": {{mnt0_elevation}},\n    \"longitude\": {{mnt0_longitude}},\n    \"latitude\": {{mnt0_latitude}},\n    \"hasmountainrailway\": {{mnt0_hasmountainrailway}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/mnts",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"mnts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add-image - /mnts/<id>/img",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"PUT /mnts/<id>/img - status\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"PUT /mnts/<id>/img - response\", () => {",
+							"  pm.expect(res.properties.name).to.eql(pm.environment.get(\"mnt0_name\"));",
+							"  pm.expect(res.properties.img.match(/jpg$/)[0]).to.eql(\"jpg\");",
+							"  pm.expect(res.properties.el.toString()).to.eql(pm.environment.get(\"mnt0_elevation\"));",
+							"  pm.expect(res.properties.mountainrailway.toString()).to.eql(pm.environment.get(\"mnt0_hasmountainrailway\"));",
+							"  pm.expect(res.geometry.coordinates[0].toString()).to.eql(pm.environment.get(\"mnt0_longitude\"));",
+							"  pm.expect(res.geometry.coordinates[1].toString()).to.eql(pm.environment.get(\"mnt0_latitude\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"contentType": "image/jpg",
+							"type": "file",
+							"src": "testing/tannhorn.jpg"
+						},
+						{
+							"key": "",
+							"type": "file",
+							"src": [],
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/mnts/{{mnt0_id}}/img",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"mnts",
+						"{{mnt0_id}}",
+						"img"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update-public-mountain - /mnts/<id>",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"PUT /mnts/<id> - status\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"PUT /mnts/<id> - response\", () => {",
+							"  pm.expect(res.properties.id).to.eql(pm.environment.get(\"mnt0_id\"));",
+							"  pm.expect(res.properties.name).to.eql(pm.environment.get(\"mnt3_name\"));",
+							"  pm.expect(res.properties.el.toString()).to.eql(pm.environment.get(\"mnt3_elevation\"));",
+							"  pm.expect(res.properties.mountainrailway.toString()).to.eql(pm.environment.get(\"mnt3_hasmountainrailway\"));",
+							"  pm.expect(res.geometry.coordinates[0].toString()).to.eql(pm.environment.get(\"mnt3_longitude\"));",
+							"  pm.expect(res.geometry.coordinates[1].toString()).to.eql(pm.environment.get(\"mnt3_latitude\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{mnt3_name}}\",\n    \"elevation\": {{mnt3_elevation}},\n    \"longitude\": {{mnt3_longitude}},\n    \"latitude\": {{mnt3_latitude}},\n    \"hasmountainrailway\": {{mnt3_hasmountainrailway}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/mnts/{{mnt0_id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"mnts",
+						"{{mnt0_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete-existing-public-mountains localhost:3000/mnts",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Delete /mnts - status\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"DELETE /mnts - response\", () => {",
+							"  pm.expect(res.mountainsDeleted).to.eql(1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/mnts/{{mnt0_id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"mnts",
+						"{{mnt0_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete-non-existing-public-mountains localhost:3000/mnts",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Delete /mnts - non existing user - status\", () => {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"DELETE /mnts - non existing user - response\", () => {",
+							"  pm.expect(res.mountainsDeleted).to.eql(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/mnts/{{mnt0_id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"mnts",
+						"{{mnt0_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add-image-user-non-existing-mountain - /mnts/<id>/img",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"PUT /users/<id>/mnts/<id>/img - non-existing-mountain - status\", () => {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"PUT /users/<id>/mnts/<id>/img - non-existing-mountain - response\", () => {",
+							"  pm.expect(res).to.be.empty;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"contentType": "image/jpg",
+							"type": "file",
+							"src": "testing/tannhorn.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/mnts/{{mnt0_id}}/img",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"mnts",
+						"{{mnt0_id}}",
+						"img"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update-public-non-existing-mountain - /mnts/<id>",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"PUT /mnts/<id> - non-exisisting-mountain - status\", () => {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"PUT /mnts/<id> - - non-exisisting-mountain - non-exisisting-mountain -response\", () => {",
+							"  pm.expect(res).to.be.empty;",
+							"  ",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{mnt3_name}}\",\n    \"elevation\": {{mnt3_elevation}},\n    \"longitude\": {{mnt3_longitude}},\n    \"latitude\": {{mnt3_latitude}},\n    \"hasmountainrailway\": {{mnt3_hasmountainrailway}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/mnts/{{mnt0_id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"mnts",
+						"{{mnt0_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login - localhost:3000/login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET /login - status\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"const avatarUrl = res.avatar;",
+							"const avatar = avatarUrl.substring(avatarUrl.lastIndexOf(\"/\")+1);",
+							"pm.test(\"GET /login - response\", () => {",
+							"  pm.expect(res.jwt).not.empty;",
+							"  pm.expect(res.username).to.eql(pm.environment.get(\"user_3_username\"));",
+							"  pm.expect(res.firstname).to.eql(pm.environment.get(\"user_3_firstname\"));",
+							"  pm.expect(res.lastname).to.eql(pm.environment.get(\"user_3_lastname\"));",
+							"  pm.expect(avatar).to.eql(pm.environment.get(\"user_3_avatar\"));",
+							"});",
+							"pm.environment.set(\"user_3_jwt\", res.jwt);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{user_3_username}}\",\n    \"pwd\": \"{{user_3_pwd}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/login",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login-wrong-password - localhost:3000/login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET /login - wrong passwort status\", () => {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"GET /login - wrong password - response\", () => {",
+							"  pm.expect(res.errorMessage).to.eql(pm.environment.get(\"login_fail\"));",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{user_3_username}}\",\n    \"pwd\": \"rubish\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/login",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-all-user-mnts-ids - localhost:3000/users/<userid>/mnts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET /users/3/mnts - status\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"",
+							"pm.test(\"GET /users/3/mnts - response\", () => {",
+							"  pm.expect(res[0]).to.eql(13);  ",
+							"  pm.expect(res[3]).to.eql(16);",
+							"  pm.expect(res.length).to.eql(4);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user_3_jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/users/{{user_3_id}}/mnts",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"{{user_3_id}}",
+						"mnts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-all-user-mnts-ids-invalid-userid - localhost:3000/users/<userid>/mnts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET /users/5/mnts - invalid auth - status\", () => {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"",
+							"pm.test(\"GET /users/5/mnts - invalid auth - response\", () => {",
+							"  pm.expect(res.errorMessage).to.eql(\"jwt subject invalid. expected: 5\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user_3_jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/users/{{user_5_id}}/mnts",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"{{user_5_id}}",
+						"mnts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-user-mountains-by-id - /users/<userid>/mnts/<mntids>",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET /users/<userid>/mnts/<mntid> - status\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"GET /users/3/mnts/3,7,14 - response\", () => {",
+							"  pm.expect(res.properties.name).to.eql(pm.environment.get(\"mnt14_name\"));",
+							"  pm.expect(res.properties.el.toString()).to.eql(pm.environment.get(\"mnt14_elevation\"));",
+							"  pm.expect(res.properties.mountainrailway.toString()).to.eql(pm.environment.get(\"mnt14_hasmountainrailway\"));",
+							"  pm.expect(res.geometry.coordinates[0].toString()).to.eql(pm.environment.get(\"mnt14_longitude\"));",
+							"  pm.expect(res.geometry.coordinates[1].toString()).to.eql(pm.environment.get(\"mnt14_latitude\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user_3_jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/users/{{user_3_id}}/mnts/{{mnt14_id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"{{user_3_id}}",
+						"mnts",
+						"{{mnt14_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-user-non-existing-mountain - /users/<iuserd>/mnts/<mntid>",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET /users/<id>/mnts/<id> - non-exisisting-mountain - status\", () => {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"GET /users/<id>/mnts/<id> - - non-exisisting-mountain - non-exisisting-mountain -response\", () => {",
+							"  pm.expect(res).to.be.empty;",
+							"  ",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user_3_jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/users/{{user_3_id}}/mnts/{{mnt7_id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"{{user_3_id}}",
+						"mnts",
+						"{{mnt7_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add-user-mountain - /users/<id>/mnts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"POST /users/3/mnts - status\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.environment.set(\"mnt0_id\", res.properties.id);",
+							"pm.test(\"POST /users/3/mnts - response\", () => {",
+							"  pm.expect(res.properties.name).to.eql(pm.environment.get(\"mnt0_name\"));",
+							"  pm.expect(res.properties.el.toString()).to.eql(pm.environment.get(\"mnt0_elevation\"));",
+							"  pm.expect(res.properties.mountainrailway.toString()).to.eql(pm.environment.get(\"mnt0_hasmountainrailway\"));",
+							"  pm.expect(res.geometry.coordinates[0].toString()).to.eql(pm.environment.get(\"mnt0_longitude\"));",
+							"  pm.expect(res.geometry.coordinates[1].toString()).to.eql(pm.environment.get(\"mnt0_latitude\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user_3_jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{mnt0_name}}\",\n    \"elevation\": {{mnt0_elevation}},\n    \"longitude\": {{mnt0_longitude}},\n    \"latitude\": {{mnt0_latitude}},\n    \"hasmountainrailway\": {{mnt0_hasmountainrailway}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/users/{{user_3_id}}/mnts",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"{{user_3_id}}",
+						"mnts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add-user-image - /users/<userid>/mnts/<mntid>/img",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"PUT /users/3/mnts/<mntid>/img - status\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"PUT /users/3/mnts/<mntid>/img - response\", () => {",
+							"  pm.expect(res.properties.name).to.eql(pm.environment.get(\"mnt0_name\"));",
+							"  pm.expect(res.properties.img.match(/jpg$/)[0]).to.eql(\"jpg\");",
+							"  pm.expect(res.properties.el.toString()).to.eql(pm.environment.get(\"mnt0_elevation\"));",
+							"  pm.expect(res.properties.mountainrailway.toString()).to.eql(pm.environment.get(\"mnt0_hasmountainrailway\"));",
+							"  pm.expect(res.geometry.coordinates[0].toString()).to.eql(pm.environment.get(\"mnt0_longitude\"));",
+							"  pm.expect(res.geometry.coordinates[1].toString()).to.eql(pm.environment.get(\"mnt0_latitude\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user_3_jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"contentType": "image/jpg",
+							"type": "file",
+							"src": "testing/tannhorn.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/users/{{user_3_id}}/mnts/{{mnt0_id}}/img",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"{{user_3_id}}",
+						"mnts",
+						"{{mnt0_id}}",
+						"img"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update-user-mountain - /mnts/<id>",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"PUT /users/<id>/mnts/<id> - status\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"PUT /users/<id>/mnts/<id> - response\", () => {",
+							"  pm.expect(res.properties.id).to.eql(pm.environment.get(\"mnt0_id\"));",
+							"  pm.expect(res.properties.name).to.eql(pm.environment.get(\"mnt3_name\"));",
+							"  pm.expect(res.properties.el.toString()).to.eql(pm.environment.get(\"mnt3_elevation\"));",
+							"  pm.expect(res.properties.mountainrailway.toString()).to.eql(pm.environment.get(\"mnt3_hasmountainrailway\"));",
+							"  pm.expect(res.geometry.coordinates[0].toString()).to.eql(pm.environment.get(\"mnt3_longitude\"));",
+							"  pm.expect(res.geometry.coordinates[1].toString()).to.eql(pm.environment.get(\"mnt3_latitude\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user_3_jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{mnt3_name}}\",\n    \"elevation\": {{mnt3_elevation}},\n    \"longitude\": {{mnt3_longitude}},\n    \"latitude\": {{mnt3_latitude}},\n    \"hasmountainrailway\": {{mnt3_hasmountainrailway}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/users/{{user_3_id}}/mnts/{{mnt0_id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"{{user_3_id}}",
+						"mnts",
+						"{{mnt0_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete-existing-user-mountains localhost:3000/mnts",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Delete /users/<userid>/mnts/<mntids> - status\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"DELETE /users/<userid>/mnts/<mntid> - response\", () => {",
+							"  pm.expect(res.mountainsDeleted).to.eql(1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user_3_jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/users/{{user_3_id}}/mnts/{{mnt0_id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"{{user_3_id}}",
+						"mnts",
+						"{{mnt0_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete-non-existing-user-mountains localhost:3000/mnts",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Delete /users/<userid>/mnts/<mntids> - non existing user - status\", () => {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"DELETE /users/<userid>/mnts/<mntid> - non existing user - response\", () => {",
+							"  pm.expect(res.mountainsDeleted).to.eql(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user_3_jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/users/{{user_3_id}}/mnts/{{mnt0_id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"{{user_3_id}}",
+						"mnts",
+						"{{mnt0_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add-image-public-non-existing-mountain - /mnts/<id>/img",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"PUT /mnts/<id>/img - non-existing-mountain - status\", () => {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"PUT /mnts/<id>/img - non-existing-mountain - response\", () => {",
+							"  pm.expect(res).to.be.empty;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user_3_jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"contentType": "image/jpg",
+							"type": "file",
+							"src": "testing/tannhorn.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/users/{{user_3_id}}/mnts/{{mnt0_id}}/img",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"{{user_3_id}}",
+						"mnts",
+						"{{mnt0_id}}",
+						"img"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update-user-non-existing-mountain - /users/<id>/mnts/<id>",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"PUT /users/<id>/mnts/<id> - non-exisisting-mountain - status\", () => {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"PUT /users/<id>/mnts/<id> - - non-exisisting-mountain - non-exisisting-mountain -response\", () => {",
+							"  pm.expect(res).to.be.empty;",
+							"  ",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user_3_jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{mnt3_name}}\",\n    \"elevation\": {{mnt3_elevation}},\n    \"longitude\": {{mnt3_longitude}},\n    \"latitude\": {{mnt3_latitude}},\n    \"hasmountainrailway\": {{mnt3_hasmountainrailway}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/users/{{user_3_id}}/mnts/{{mnt0_id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"{{user_3_id}}",
+						"mnts",
+						"{{mnt0_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

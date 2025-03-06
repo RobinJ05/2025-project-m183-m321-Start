@@ -1,0 +1,25 @@
+.mountain-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+    margin: 20px auto 0;
+}
+
+.mountain-form input {
+    padding: 10px;
+    font-size: 16px;
+}
+
+.mountain-form button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.mountain-form button:hover {
+    background-color: #111;
+}

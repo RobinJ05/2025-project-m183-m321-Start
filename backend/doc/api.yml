@@ -1,0 +1,676 @@
+openapi: 3.0.0
+info:
+  title: Playground - Backend für Berg-Galerie
+  description: REST-API für die Verwaltung von Berg-Galerie-Bildern
+  version: 0.1.22
+
+servers:
+  - url: http://localhost:3000
+
+paths:
+  /mnts:
+    get:
+      description: Liste aller IDs der Berge
+      responses:
+        '200':
+          description: Array aller IDs der vorhanden Berge.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mntIdList'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+
+    post:
+      description: Einen neuen Berg hinzufügen (ohne Bild)
+      requestBody:
+        description: Attribute des neu zu erstellenden Berges.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mntInputObject'
+      responses:
+        '201':
+          description: Der neu erstellte Berg.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mntOutputImagelessObject'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+
+  /users/{id}/mnts:
+    get:
+      security:
+        - bearerAuth: []
+      description: Liste aller privaten (= nicht öffentlichen) Berge eines bestimmten Benutzers.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID des Benutzers
+          schema:
+            type : integer
+            minimum: 1
+            maximum: 1
+          style: simple
+          explode: false
+      responses:
+        '200':
+          description: Array aller privaten Berg-IDs eines bestemmten Benutzers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/privateMntIdList'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+
+    post:
+      security:
+        - bearerAuth: []
+      description: Einen neuen privaten (= nicht öffentlichen) Berg einem Benutzer hinzufügen
+      requestBody:
+        description: Attribute des neu zu erstellenden Berges.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mntInputObject'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID des Benutzers
+          schema:
+            type : integer
+            minimum: 1
+            maximum: 1
+          style: simple
+          explode: false
+      responses:
+        '201':
+          description: Der neu erstellte Berg.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mntOutputImagelessObject'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+
+
+  /login:
+    post:
+      description: Authentisierung mit Hilfe Username/PWD. Erfolgreiche Authentisierung gibt JWT zurück.
+      requestBody:
+        description: Username / PWD
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userLoginInputObject'
+      responses:
+        '200':
+          description: Authentisierung erfolgreich. Als Response wird der Benutzer mit dem JWT zurückgegeben.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userLoginOutputObject'
+        '401':
+          description: Authentisierung nicht erfolgreich. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage401'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+
+  /users:
+    post:
+      description: Einen neuen Benutzer registrieren / hinzufügen
+      requestBody:
+        description: Username, Vorname, Nachname, Passwort und Avatar der neuen Benuzters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userInputObject'
+      responses:
+        '201':
+          description: Der neu erstellte Benutzer mit zugewiesener ID. PWD wird normlerweise nie mitgeliefert, auch nicht als Hash. Hier im Playground-Umfeld zur Veranschaulichung.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userSignupOutputObject'
+        '409':
+          description: Conflict. Username bereits vergeben / Benutzer existiert bereits. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage409'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+
+
+  /avatars:
+    get:
+      description: Liste aller auswähbaren Avatars
+      responses:
+        '200':
+          description: URL-Array zu den verfügbaren Avatars.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/avatarList'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+
+
+
+  /mnts/{id}:
+    get:
+      description: Sucht den Berg mit einer bestimmten ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID des Berges
+          schema:
+            type : integer
+            minimum: 1
+            maximum: 1
+          style: simple
+          explode: false
+      responses:
+        '200':
+          description: Der gesuchte Berg. Leer falls Berg nicht existiert.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mntOutputObject'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+    put:
+      description: Attribute eines Berges aktualisieren.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID des Berges
+          schema:
+            type : integer
+            minimum: 1
+            maximum: 1
+          style: simple
+          explode: false
+      requestBody:
+        description: Attribute des neu zu aktualisierenden Berges.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mntInputObject'
+      responses:
+        '200':
+          description: Der Berg mit aktualisierten Attributen.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mntOutputObject'
+        '404':
+          description: Not Found. Berg / Resource mit der entsprechenden ID nicht gefunden.
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+    delete:
+      description: Entfernt den Berg mit einer bestimmten ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID des Berges
+          schema:
+            type : integer
+            minimum: 1
+            maximum: 1
+          style: simple
+          explode: false
+      responses:
+        '200':
+          description: Anzahl der gelöschten Berge. Immer 1.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/oneDeletedMountain'
+        '404':
+          description: Not Found. Berg / Resource mit der entsprechenden ID nicht gefunden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/noDeletedMountain'
+
+
+  /users/{userid}/mnts/{mntid}:
+    get:
+      security:
+        - bearerAuth: []
+      description: Gibt den (privaten) Berg mit der ID <mntid> des Benutzers mit der ID <userid> zurück.
+      parameters:
+        - name: mntid
+          in: path
+          required: true
+          description: ID des Berges
+          schema:
+            type : integer
+            minimum: 1
+            maximum: 1
+          style: simple
+          explode: false
+        - name: userid
+          in: path
+          required: true
+          description: ID des Benutzers
+          schema:
+            type : integer
+            minimum: 1
+            maximum: 1
+          style: simple
+          explode: false
+      responses:
+        '200':
+          description: Der gesuchte Berg. Leer falls Berg nicht existiert.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mntOutputObject'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+    put:
+      security:
+        - bearerAuth: []
+      description: Attribute des (privaten) Berges mit der ID <mntid> des Benutzers mit der ID <userid> aktualisieren.
+      parameters:
+        - name: mntid
+          in: path
+          required: true
+          description: ID des Berges
+          schema:
+            type : integer
+            minimum: 1
+            maximum: 1
+          style: simple
+          explode: false
+        - name: userid
+          in: path
+          required: true
+          description: ID des Benutzers
+          schema:
+            type : integer
+            minimum: 1
+            maximum: 1
+          style: simple
+          explode: false
+      requestBody:
+        description: Attribute des neu zu aktualisierenden Berges.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mntInputObject'
+      responses:
+        '200':
+          description: Der Berg mit aktualisierten Attributen.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mntOutputObject'
+        '404':
+          description: Not Found. Berg / Resource mit der entsprechenden ID nicht gefunden.
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+    delete:
+      security:
+        - bearerAuth: []
+      description: Entfernt den (privaten) Berg mit der ID <mntid> des Benutzers mit der ID <userid>.
+      parameters:
+        - name: mntid
+          in: path
+          required: true
+          description: ID des Berges
+          schema:
+            type : integer
+            minimum: 1
+            maximum: 1
+          style: simple
+          explode: false
+        - name: userid
+          in: path
+          required: true
+          description: ID des Benutzers
+          schema:
+            type : integer
+            minimum: 1
+            maximum: 1
+          style: simple
+          explode: false
+      responses:
+        '200':
+          description: Anzahl der gelöschten Berge. Immer 1.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/oneDeletedMountain'
+        '404':
+          description: Not Found. Berg / Resource mit der entsprechenden ID nicht gefunden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/noDeletedMountain'
+
+
+
+  /mnts/{id}/img:
+    put:
+      description: Lädt für einen bestehenden Berg ein Bild hoch.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID des Berges
+          schema:
+            type : integer
+            minimum: 1
+            maximum: 1
+          style: simple
+          explode: false
+      requestBody:
+        description: Bild-Datei.
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/mntImage'
+      responses:
+        '200':
+          description: Der Berg, mit dem neuen Bild.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mntOutputObject'
+        '404':
+          description: Not Found. Berg / Resource mit der entsprechenden ID nicht gefunden.
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    mntInputObject:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Piz Bernina
+        elevation:
+          type: number
+          example: 4049
+        longitude:
+          type: number
+          example: 9.908117
+        latitude:
+          type: number
+          example: 46.382328
+        hasmountainrailway:
+          type: boolean
+          example: false
+    userInputObject:
+      type: object
+      properties:
+        username:
+          type: string
+          example: j.bond@mi6.gov
+        pwd:
+          type: string
+          example: abc123
+        firstname:
+          type: string
+          example: James
+        lastanme:
+          type: string
+          example: Bond
+        avatar:
+          type: string
+          example: avatar09.svg
+    userLoginInputObject:
+      type: object
+      properties:
+        username:
+          type: string
+          example: dr@bell.org
+        pwd:
+          type: string
+          example: 123
+    userLoginOutputObject:
+      type: object
+      properties:
+        avatar:
+          type: string
+          example: http://localhost:3000/avatar05.svg
+        id:
+          type: number
+          example: 6
+        firstname:
+          type: string
+          example: Dennis
+        lastanme:
+          type: string
+          example: Ritchie
+        username:
+          type: string
+          example: dr@bell.org
+        pwd:
+          type: string
+          description: PWDs werden normalerweise nie zurückgegeben, auch nicht als Hash. Hier im Playground-Umfeld nur zur Veranschaulichung.
+          example: $2b$10$PSd1n8G3.nhUqn1jTs012ObPvRDYG7lyA6EKp0TZIxa897WZcu3mW
+        updateAt:
+          type: string
+          example: 2022-08-27T13:24:12.603Z
+        createdAt:
+          type: string
+          example: 2022-08-27T13:24:12.603Z
+        jwt:
+          type: string
+          description: JSON Web Token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjYxOTM4MTgyLCJleHAiOjE2NjE5NDE3ODIsImF1ZCI6IjMifQ.OdPwYiVcJTXgp6QIVPeB3QH-vK9anmUuzdzbBCq5-II
+    userSignupOutputObject:
+      type: object
+      properties:
+        avatar:
+          type: string
+          example: http://localhost:3000/avatar09.svg
+        id:
+          type: number
+          example: 6
+        firstname:
+          type: string
+          example: James
+        lastanme:
+          type: string
+          example: Bond
+        username:
+          type: string
+          example: j.bond@mi6.gov
+        pwd:
+          type: string
+          description: PWDs werden normalerweise nie zurückgegeben, auch nicht als Hash. Hier im Playground-Umfeld nur zur Veranschaulichung.
+          example: $2b$10$PSd1n8G3.nhUqn1jTs012ObPvRDYG7lyA6EKp0TZIxa897WZcu3mW
+        updateAt:
+          type: string
+          example: 2022-08-27T13:24:12.603Z
+        createdAt:
+          type: string
+          example: 2022-08-27T13:24:12.603Z
+    mntOutputObject:
+      type: object
+      properties:
+        geometry:
+          $ref: '#/components/schemas/geoJsonPoint'
+        properties:
+          $ref: '#/components/schemas/mntProperties'
+    geoJsonPoint:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [Point]
+          example: Point
+        coordinates:
+          type: array
+          items:
+            type: number
+          minItems: 2
+          maxItems: 2
+          example: [9.908117, 46.382328]
+    mntProperties:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 5
+        name:
+          type: string
+          nullable: true 
+          example: Piz Bernina
+        el:
+          type: number
+          nullable: true 
+          example: 4049
+        img:
+          type: string
+          nullable: true 
+          format: url
+          example: http://localhost:3000/pizbernina.jpg
+        mountainrailway:
+          type: boolean
+          nullable: true 
+          example: false
+    mntOutputImagelessObject:
+      type: object
+      properties:
+        geometry:
+          $ref: '#/components/schemas/geoJsonPoint'
+        properties:
+          $ref: '#/components/schemas/mntImagelessProperties'
+    mntImagelessProperties:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 5
+        name:
+          type: string
+          nullable: true 
+          example: Piz Bernina
+        el:
+          type: number
+          nullable: true 
+          example: 4049
+        mountainrailway:
+          type: boolean
+          nullable: true 
+          example: false
+    mntImage:
+      type: object
+      properties:
+        image:
+          type: string
+          format: binary
+    oneDeletedMountain:
+      type: object
+      properties:
+        mountainsDeleted:
+          type: number
+          example: 1
+    noDeletedMountain:
+      type: object
+      properties:
+        mountainsDeleted:
+          type: number
+          example: 0
+    errorMessage401:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+          example: Authentication failed.
+    errorMessage409:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+          example: User already exists.
+    errorMessage500:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+          example: connect ECONNREFUSED 127.0.0.1:3306
+    mntIdList:
+      type: array
+      items:
+        type: integer
+      example: [0,1,2,3,4,5,6,7,8,9,10,11,12]
+    privateMntIdList:
+      type: array
+      items:
+        type: integer
+      example: [13,14,15,16]
+    avatarList:
+      type: array
+      items:
+        type: string
+      example: ["http://localhost:3000/avatar01.svg", "http://localhost:3000/avatar02.svg", "http://localhost:3000/avatar09.svg"]

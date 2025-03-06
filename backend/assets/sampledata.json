@@ -1,0 +1,337 @@
+{
+  "mountains": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [8.005382, 46.577555]
+        },
+        "properties": {
+          "id": 1,
+          "name": "Eiger",
+          "el": 3967,
+          "url": "",
+          "img": "eiger.jpg",
+          "mountainrailway": false
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [9.020156, 45.931455]
+        },
+        "properties": {
+          "id": 2,
+          "name": "Monte Generoso",
+          "el": 1701,
+          "url": "",
+          "img": "generoso.jpg",
+          "mountainrailway": true
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [7.658434, 45.976653]
+        },
+        "properties": {
+          "id": 3,
+          "name": "Matterhorn",
+          "el": 4477,
+          "url": "",
+          "img": "matterhorn.jpg",
+          "mountainrailway": false
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [8.681283, 46.73697]
+        },
+        "properties": {
+          "id": 4,
+          "name": "Bristen",
+          "el": 3073,
+          "url": "",
+          "img": "bristen.jpg",
+          "mountainrailway": false
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [7.775339, 46.711302]
+        },
+        "properties": {
+          "id": 5,
+          "name": "Niederhorn",
+          "el": 1963,
+          "url": "",
+          "img": "niederhorn.jpg",
+          "mountainrailway": true
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [9.908117, 46.382328]
+        },
+        "properties": {
+          "id": 6,
+          "name": "Piz Bernina",
+          "el": 4049,
+          "url": "",
+          "img": "pizbernina.jpg",
+          "mountainrailway": false
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [8.485215, 47.056731]
+        },
+        "properties": {
+          "id": 7,
+          "name": "Rigi",
+          "el": 1798,
+          "url": "",
+          "img": "rigi.jpg",
+          "mountainrailway": true
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [9.343259, 47.249403]
+        },
+        "properties": {
+          "id": 8,
+          "name": "Säntis",
+          "el": 2502,
+          "url": "",
+          "img": "santis.jpg",
+          "mountainrailway": true
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [8.437769, 46.772067]
+        },
+        "properties": {
+          "id": 9,
+          "name": "Titlis",
+          "el": 3238,
+          "url": "",
+          "img": "titlis.jpg",
+          "mountainrailway": true
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [8.914868, 46.811151]
+        },
+        "properties": {
+          "id": 10,
+          "name": "Tödi",
+          "el": 3614,
+          "url": "",
+          "img": "todi.jpg",
+          "mountainrailway": false
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [9.221249, 46.898255]
+        },
+        "properties": {
+          "id": 11,
+          "name": "Tschingelhörner",
+          "el": 2849,
+          "url": "",
+          "img": "tschingelhorner.jpg",
+          "mountainrailway": false
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [8.49205, 47.349499]
+        },
+        "properties": {
+          "id": 12,
+          "name": "Uetliberg",
+          "el": 870,
+          "url": "",
+          "img": "uetliberg.jpg",
+          "mountainrailway": true
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [8.988836, 46.992828]
+        },
+        "properties": {
+          "id": 13,
+          "name": "Glärnisch",
+          "el": 2914,
+          "url": "",
+          "img": "glarnisch.jpg",
+          "mountainrailway": false
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [7.53658, 46.694428]
+        },
+        "properties": {
+          "id": 14,
+          "name": "Stockhorn",
+          "el": 2190,
+          "url": "",
+          "img": "stockhorn.jpg",
+          "mountainrailway": true
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [7.298942, 45.936849]
+        },
+        "properties": {
+          "id": 15,
+          "name": "Grand Combin",
+          "el": 4314,
+          "url": "",
+          "img": "grandcombin.jpg",
+          "mountainrailway": false
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [9.358022, 46.652469]
+        },
+        "properties": {
+          "id": 16,
+          "name": "Piz Beverin",
+          "el": 2998,
+          "url": "",
+          "img": "pizbeverin.jpg",
+          "mountainrailway": false
+        }
+      }
+    ]
+  },
+  "users_hashed_pwd": [
+    {
+      "id": 1,
+      "firstname": "Grady",
+      "lastname": "Booch",
+      "username": "gbo@oonet.com",
+      "pwd": "$2b$10$mrPqooFJTgHeLNx7VlqtCezAgnkr599xNnA5z91RS3BSIxHjN4pH.",
+      "avatar": "avatar09.svg"
+    },
+    {
+      "id": 2,
+      "firstname": "Niklaus",
+      "lastname": "Wirth",
+      "username": "nw@inf.ethz.ch",
+      "pwd": "$2b$10$mrPqooFJTgHeLNx7VlqtCezAgnkr599xNnA5z91RS3BSIxHjN4pH.",
+      "avatar": "avatar04.svg"
+    },
+    {
+      "id": 3,
+      "firstname": "Dennis",
+      "lastname": "Ritchie",
+      "username": "dr@bell.org",
+      "pwd": "$2b$10$mrPqooFJTgHeLNx7VlqtCezAgnkr599xNnA5z91RS3BSIxHjN4pH.",
+      "avatar": "avatar05.svg"
+    },
+    {
+      "id": 4,
+      "firstname": "Edgar",
+      "lastname": "Codd",
+      "username": "ec@oxf.edu",
+      "pwd": "$2b$10$mrPqooFJTgHeLNx7VlqtCezAgnkr599xNnA5z91RS3BSIxHjN4pH.",
+      "avatar": "avatar06.svg"
+    },
+    {
+      "id": 5,
+      "firstname": "Marie",
+      "lastname": "Harrison",
+      "username": "mh@bbc.co.uk",
+      "pwd": "$2b$10$mrPqooFJTgHeLNx7VlqtCezAgnkr599xNnA5z91RS3BSIxHjN4pH.",
+      "avatar": "avatar01.svg"
+    }
+  ],
+  "users_clear_pwd": [
+    {
+      "id": 1,
+      "firstname": "Grady",
+      "lastname": "Booch",
+      "username": "gbo@oonet.com",
+      "pwd": "123",
+      "avatar": "avatar09.svg"
+    },
+    {
+      "id": 2,
+      "firstname": "Niklaus",
+      "lastname": "Wirth",
+      "username": "nw@inf.ethz.ch",
+      "pwd": "123",
+      "avatar": "avatar04.svg"
+    },
+    {
+      "id": 3,
+      "firstname": "Dennis",
+      "lastname": "Ritchie",
+      "username": "dr@bell.org",
+      "pwd": "123",
+      "avatar": "avatar05.svg"
+    },
+    {
+      "id": 4,
+      "firstname": "Edgar",
+      "lastname": "Codd",
+      "username": "ec@oxf.edu",
+      "pwd": "123",
+      "avatar": "avatar06.svg"
+    },
+    {
+      "id": 5,
+      "firstname": "Marie",
+      "lastname": "Harrison",
+      "username": "mh@bbc.co.uk",
+      "pwd": "123",
+      "avatar": "avatar01.svg"
+    }
+  ],
+  "user_mountains": [
+    { "userid": 3, "mountainid": 13 },
+    { "userid": 3, "mountainid": 14 },
+    { "userid": 3, "mountainid": 15 },
+    { "userid": 3, "mountainid": 16 }
+  ]
+}

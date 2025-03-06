@@ -1,0 +1,252 @@
+openapi: 3.0.0
+info:
+  title: Playground - Froum - Benutzerverwaltung
+  description: REST-API für Playground (Forum mit Benutzerverwaltung)
+  version: 0.3.0
+
+servers:
+  - url: http://localhost:3000
+
+security:
+  - auth: []
+
+
+paths:
+  /login:
+    get:
+      description: Authentifizierung mit Username und Passwort
+      responses:
+        '200':
+          description: Authentifzierter Benutzer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userAuthenticated'
+        '401':
+          description: Erfolglose Authentifizierung / Autorisierung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage401'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+
+  /users:
+    get:
+      description: Sucht Benutzer nach bestimmten Attributen
+      parameters:
+        - in: query
+          name: firstname
+          schema:
+            type: string
+        - in: query
+          name: lastname
+          schema:
+            type: string
+        - in: query
+          name: username
+          schema:
+            type: string
+        - in: query
+          name: avatar
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ein Liste von Benutzer. Die Liste kann auch leer sein.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userOutputList'
+        '401':
+          description: Erfolglose Authentifizierung / Autorisierung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage401'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+
+    post:
+      description: Einen neuen Benuter hinzufügen
+      requestBody:
+        description: Attribute des neu zu erstellenden Benutzers.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userInputItem'
+      responses:
+        '201':
+          description: Der neu erstellte Benutzer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userOutputList'
+        '401':
+          description: Erfolglose Authentifizierung / Autorisierung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage401'
+        '409':
+          description: Benutzername existiert bereits.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage409'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+
+
+  /users/{id}:
+    get:
+      description: Sucht Benutzer mit bestimmter ID(s)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID(s) des geuchten Benutzers / der gesuchten Benutzer
+          schema:
+            type : integer
+          style: simple
+          explode: false
+      responses:
+        '200':
+          description: Ein Liste von Benutzer. Die Liste kann auch leer sein.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userOutputList'
+        '401':
+          description: Erfolglose Authentifizierung / Autorisierung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage401'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+
+    delete:
+      description: Benutzer mit einer bestimmten ID löschen
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID(s) des zu löschenden Benutzerl / der zu löschenden Benutzer
+          schema:
+            type : integer
+          style: simple
+          explode: false
+      responses:
+        '200':
+          description: Anzahl der gelöschten Benutzer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/usersDeleted'
+        '401':
+          description: Erfolglose Authentifizierung / Autorisierung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage401'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage500'
+
+
+
+components:
+  securitySchemes:
+    auth:
+      description: Basic Auth
+      type: http
+      scheme: basic
+  schemas:
+    userOutputItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 3
+        firstname:
+          type: string
+          example: Dennies
+        lastname:
+          type: string
+          example: Ritchie
+        username:
+          type: string
+          format: email
+          example: dr@bell.org
+        avatar:
+          type: string
+          example: avatar05.svg
+    userInputItem:
+      type: object
+      properties:
+        username:
+          type: string
+          format: email
+          example: dr@bell.org
+        lastname:
+          type: string
+          example: Ritchie
+        firstname:
+          type: string
+          example: Dennies
+        avatar:
+          type: string
+          example: avatar05.svg
+    usersDeleted:
+      type: object
+      properties:
+        usersDeleted:
+          type: integer
+          example: 1
+    errorMessage401:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+          example: Authentication failed.
+    errorMessage409:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+          example: User already exists.
+    errorMessage500:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+          example: connect ECONNREFUSED 127.0.0.1:3306
+    userOutputList:
+      type: array
+      items:
+        $ref: '#/components/schemas/userOutputItem'
+    userAuthenticated:
+      type: array
+      items:
+        $ref: '#/components/schemas/userOutputItem'
+      maxItems: 1

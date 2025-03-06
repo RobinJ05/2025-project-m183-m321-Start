@@ -1,0 +1,14 @@
+{
+  "realm": "ims3i",
+  "auth-server-url": "http://localhost:8089/",
+  "ssl-required": "external",
+  "resource": "mountainGalleryBackend",
+  "verify-token-audience": true,
+  "credentials": {
+    "secret": "UtJ5COTGF9h9TWSTVUW5VHLhTCFiHPRy"
+  },
+  "confidential-port": 0,
+  "policy-enforcer": {
+    "credentials": {}
+  }
+}

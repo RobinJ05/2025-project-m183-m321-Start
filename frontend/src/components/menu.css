@@ -1,0 +1,21 @@
+.menu {
+    background-color: #333;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-around;
+}
+
+.menu button {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 14px 16px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.menu button:hover {
+    background-color: #111;
+}
