@@ -1,11 +1,19 @@
 import './mountainGallery.css'
+import AuthService from '../services/authenticationService';
 
-const MountainGallery = ({ mountains }) => {
+const MountainGallery = ({ mountains, onMountainSelect }) => {
+    const handleMountainClick = (mountain) => {
+        if (!AuthService.isLoggedIn()) {
+            alert('Sie müssen eingeloggt sein, um einen Berg zu bearbeiten.');
+            return;
+        }
+        onMountainSelect(mountain);
+    };
 
     return (
         <div className="mountain-grid">
             {mountains.map((mountain) => (
-                <div key={mountain.id} className="mountain-card">
+                <div key={mountain.id} className="mountain-card" onClick={() => handleMountainClick(mountain)}>
                     <h2 className="mountain-title">{mountain.name}</h2>
                     <img
                         src={mountain.img}

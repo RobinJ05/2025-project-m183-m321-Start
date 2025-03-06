@@ -20,6 +20,7 @@ function App() {
   const [mountains, setMountains] = useState([]);
   const [loading, setLoading] = useState(true);
   const useKeycloak = true; // Flag to determine which login component to use
+  const [selectedMountain, setSelectedMountain] = useState(null);
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -34,6 +35,11 @@ function App() {
 
   const handleLoginSubmit = () => {
     AuthService.doLogin();
+  };
+
+  const handleMountainSelect = (mountain) => {
+    setSelectedMountain(mountain);
+    setSelectedItem(menuIdAddMountain);
   };
 
   const fetchMountains = async () => {
@@ -72,8 +78,8 @@ function App() {
   return (
     <div>
       <Menu setSelectedItem={setSelectedItem} menuItems={availableMenuItems} isAuthenticated={isAuthenticated} />
-      {selectedItem === menuIdHome && <MountainGallery mountains={mountains} />}
-      {selectedItem === menuIdAddMountain && <Mountain />}
+      {selectedItem === menuIdHome && <MountainGallery mountains={mountains} onMountainSelect={handleMountainSelect} />}
+      {selectedItem === menuIdAddMountain && <Mountain selectedMountain={selectedMountain} />}
       {selectedItem === menuIdLogin && 
         (useKeycloak ? 
           <LoginKeycloak handleLoginSubmit={handleLoginSubmit} /> : 

@@ -14,7 +14,7 @@ async function loadMountainList() {
     return mntList;
   } catch (err) {
     console.error("Error loading mountain list:", err);
-    throw err; // Propagate the error instead of showing alert
+    throw err;
   }
 }
 
@@ -26,7 +26,7 @@ async function loadMountain(mntId) {
     return mnt;
   } catch (err) {
     console.error("Error loading mountain:", err);
-    throw err; // Propagate the error instead of showing alert
+    throw err;
   }
 }
 
@@ -43,6 +43,25 @@ async function createMountain(mountainData) {
     });
     let mnt = res.data;
     console.log("createMountain: ", mnt);
+    return mnt;
+  } catch (err) {
+    alert(err.message, "error");
+  }
+}
+
+async function updateMountain(mountainData) {
+  try {
+    let token = AuthService.getToken();
+    console.log("token: ", token);
+    let res = await axios.put(`${backendHost}/mnts/${mountainData.id}`, mountainData, { 
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    });
+    let mnt = res.data;
+    console.log("updateMountain: ", mnt);
     return mnt;
   } catch (err) {
     alert(err.message, "error");
@@ -68,4 +87,4 @@ async function uploadMountainImage(mntId, imageFile) {
   }
 }
 
-export default { loadMountainList, loadMountain, createMountain, uploadMountainImage };
+export default { loadMountainList, loadMountain, createMountain, updateMountain, uploadMountainImage };

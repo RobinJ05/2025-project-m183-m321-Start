@@ -50,6 +50,7 @@ router.get('/users/:id', userCtrl.getUser);
 router.get("/mnts", mountainCtrl.getAllPublicMountainIds);
 router.get("/mnts/:id", mountainCtrl.getPublicMountain);
 router.post("/mnts", keycloak.protect(), mountainCtrl.addPublicMountain);
+router.put("/mnts/:id", keycloak.protect(), mountainCtrl.updatePublicMountain);
 router.put("/mnts/:mntid/img", upload, mountainCtrl.addPublicMountainImage);
 router.delete('/mnts/:id', mountainCtrl.deletePublicMountain);
 

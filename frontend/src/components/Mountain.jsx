@@ -3,13 +3,14 @@ import React, { useState } from 'react';
 import './mountain.css';
 import mountainService from '../services/mountainService';
 
-const Mountain = () => {
+const Mountain = ({ selectedMountain }) => {
     const [formData, setFormData] = useState({
-        name: '',
-        elevation: '',
-        longitude: '',
-        latitude: '',
-        hasmountainrailway: false,
+        id: selectedMountain ? selectedMountain.id : null,
+        name: selectedMountain ? selectedMountain.name : '',
+        elevation: selectedMountain ? selectedMountain.elevation : '',
+        longitude: selectedMountain ? selectedMountain.geometry.coordinates[0] : '',
+        latitude: selectedMountain ? selectedMountain.geometry.coordinates[1] : '',
+        hasmountainrailway: selectedMountain ? selectedMountain.mountainrailway : false,
         image: null
     });
 
@@ -36,8 +37,8 @@ const Mountain = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // First create the mountain
             const mountainData = {
+                id: formData.id,
                 name: formData.name,
                 elevation: parseFloat(formData.elevation),
                 longitude: parseFloat(formData.longitude),
@@ -45,9 +46,12 @@ const Mountain = () => {
                 hasmountainrailway: formData.hasmountainrailway
             };
 
-            const mountain = await mountainService.createMountain(mountainData);
-
-            console.log("Mountain: " + JSON.stringify(mountain));
+            let mountain;
+            if (formData.id) {
+                mountain = await mountainService.updateMountain(mountainData);
+            } else {
+                mountain = await mountainService.createMountain(mountainData);
+            }
 
             // If there's an image, upload it
             if (formData.image) {
@@ -56,6 +60,7 @@ const Mountain = () => {
 
             // Reset form
             setFormData({
+                id: null,
                 name: '',
                 elevation: '',
                 longitude: '',
@@ -66,8 +71,8 @@ const Mountain = () => {
 
             window.location.href = '/home';
         } catch (error) {
-            console.error('Error creating mountain:', error);
-            alert('Fehler beim Hinzufügen des Berges');
+            console.error('Error saving mountain:', error);
+            alert('Fehler beim Speichern des Berges');
         }
     };
 
@@ -107,16 +112,14 @@ const Mountain = () => {
                 step="any"
                 required
             />
-            <div>
-                <label>
-                    <input
-                        type="checkbox"
-                        name="hasmountainrailway"
-                        checked={formData.hasmountainrailway}
-                        onChange={handleInputChange}
-                    />
-                    Hat eine Bergbahn
-                </label>
+            <div className="checkbox-container">
+                <input
+                    type="checkbox"
+                    name="hasmountainrailway"
+                    checked={formData.hasmountainrailway}
+                    onChange={handleInputChange}
+                />
+                <label>Hat Bergbahn</label>
             </div>
             <input
                 type="file"
@@ -124,7 +127,9 @@ const Mountain = () => {
                 onChange={handleInputChange}
                 accept="image/*"
             />
-            <button type="submit">Berg hinzufügen</button>
+            <button type="submit">
+                {formData.id ? 'Berg aktualisieren' : 'Berg hinzufügen'}
+            </button>
         </form>
     );
 };
