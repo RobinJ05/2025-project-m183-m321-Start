@@ -6,6 +6,7 @@ import Login from './components/Login';
 import LoginKeycloak from './components/LoginKeycloak';
 import Register from './components/Register';
 import MountainGallery from './components/MountainGallery';
+import Statistics from './components/Statistics';
 import mountainService from './services/mountainService';
 import AuthService from './services/authenticationService';
 
@@ -15,31 +16,24 @@ function App() {
   const menuIdLogin = 'menuIdLogin';
   const menuIdRegister = 'menuIdRegister';
   const menuIdAddMountain = 'menuIdAddMountain';
+  const menuIdStatistics = 'menuIdStatistics';
+  const ELEVATION_THRESHOLD = 2000; // Configurable elevation threshold in meters
   const [selectedItem, setSelectedItem] = useState(menuIdHome);
   
   const [mountains, setMountains] = useState([]);
   const [loading, setLoading] = useState(true);
   const useKeycloak = true; // Flag to determine which login component to use
   const [selectedMountain, setSelectedMountain] = useState(null);
-
+  const [statistics, setStatistics] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    // Initialize Keycloak
-    AuthService.initKeycloak(() => {
-      console.log('Keycloak initialized successfully');
-      setIsAuthenticated(AuthService.isLoggedIn());
-    }); 
-    fetchMountains();
-  }, []);
-
-  const handleLoginSubmit = () => {
-    AuthService.doLogin();
-  };
-
-  const handleMountainSelect = (mountain) => {
-    setSelectedMountain(mountain);
-    setSelectedItem(menuIdAddMountain);
+  const fetchStatistics = async () => {
+    try {
+      const stats = await mountainService.getStatistics(ELEVATION_THRESHOLD);
+      setStatistics(stats);
+    } catch (err) {
+      console.error("Failed to load statistics:", err);
+    }
   };
 
   const fetchMountains = async () => {
@@ -60,6 +54,28 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    // Initialize Keycloak
+    AuthService.initKeycloak(() => {
+      console.log('Keycloak initialized successfully');
+      const isLoggedIn = AuthService.isLoggedIn();
+      setIsAuthenticated(isLoggedIn);
+      if (isLoggedIn) {
+        fetchStatistics();
+      }
+    }); 
+    fetchMountains();
+  }, []);
+
+  const handleLoginSubmit = () => {
+    AuthService.doLogin();
+  };
+
+  const handleMountainSelect = (mountain) => {
+    setSelectedMountain(mountain);
+    setSelectedItem(menuIdAddMountain);
+  };
+
   if (loading) {
     return <div>Die Berge werden geladen ...</div>;
   }
@@ -68,11 +84,15 @@ function App() {
   }
 
   // Update menu items based on authentication state
+
   const availableMenuItems = [
     { name: 'Home', id: menuIdHome },
     { name: 'Login', id: menuIdLogin },
     { name: 'Registrieren', id: menuIdRegister },
-    ...(isAuthenticated ? [{ name: 'Berg hinzufügen', id: menuIdAddMountain }] : [])
+    ...(isAuthenticated ? [
+      { name: 'Berg hinzufügen', id: menuIdAddMountain },
+      { name: 'Statistiken', id: menuIdStatistics }
+    ] : [])
   ];
 
   return (
@@ -86,6 +106,7 @@ function App() {
           <Login />)
       }
       {selectedItem === menuIdRegister && <Register />}
+      {selectedItem === menuIdStatistics && isAuthenticated && <Statistics statistics={statistics} />}
     </div>
   )
 }

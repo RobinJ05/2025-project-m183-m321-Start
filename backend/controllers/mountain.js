@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const glob = require("glob");
 const logger = require('../util/log');
+const { validationResult } = require('express-validator');
 
 const { isEmpty } = require("../util/helper");
 const Mountain = require("../models/mountain");
@@ -10,6 +11,7 @@ const {
   HTTP_STATUS_CREATED,
   HTTP_STATUS_NOT_FOUND,
   HTTP_STATUS_INTERNAL_SERVER_ERROR,
+  HTTP_STATUS_UNPROCESSABLE_CONTENT,
   STATIC_DIR,
   USE_SESSION_HANDLING
 } = require("../util/const");
@@ -110,6 +112,13 @@ exports.getPublicMountain = async (req, res, next) => {
 
 exports.addPublicMountain = async (req, res, next) => {
   try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log("addPublicMountain validation error: ", errors);
+      return res.status(HTTP_STATUS_UNPROCESSABLE_CONTENT).json({ errors: errors.array() });
+    }
+
     console.log("addPublicMountain", req.body);
     const mountain = await Mountain.create({
       name: req.body.name,
@@ -231,6 +240,50 @@ exports.deletePublicMountain = async (req, res, next) => {
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.calculateStatistics = async (req, res, next) => {
+  try {
+    const elevationLevel = parseInt(req.params.elevationLevel);
+
+    if (isNaN(elevationLevel)) {
+      const error = new Error('Invalid elevation level');
+      error.statusCode = HTTP_STATUS_UNPROCESSABLE_CONTENT;
+      throw error;
+    }
+
+    const allMountains = await Mountain.findAll({
+      where: {
+        userId: { [Op.is]: null }
+      },
+      attributes: ['id', 'name', 'elevation', 'latitude']
+    });
+
+    const highestMountain = allMountains.reduce((max, mountain) => 
+      mountain.elevation > (max?.elevation || 0) ? mountain : max, null);
+
+    const northernmostMountain = allMountains.reduce((north, mountain) => 
+      mountain.latitude > (north?.latitude || -90) ? mountain : north, null);
+
+    const statistics = {
+      mountainsAboveThreshold: allMountains.filter(m => m.elevation > elevationLevel).length,
+      highestMountain: highestMountain ? {
+        name: highestMountain.name,
+        elevation: highestMountain.elevation
+      } : null,
+      northernmostMountain: northernmostMountain ? {
+        name: northernmostMountain.name,
+        latitude: northernmostMountain.latitude
+      } : null
+    };
+
+    res.status(HTTP_STATUS_OK).json(statistics);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = HTTP_STATUS_INTERNAL_SERVER_ERROR;
     }
     next(err);
   }

@@ -4,6 +4,9 @@ const express = require("express");
 // utility to handle file uploads
 const multer = require("multer");
 
+// validation middleware
+const { body } = require("express-validator");
+
 // import controller functions
 const mountainCtrl = require("../controllers/mountain");
 const userCtrl = require("../controllers/user");
@@ -49,7 +52,30 @@ router.get('/users/:id', userCtrl.getUser);
 
 router.get("/mnts", mountainCtrl.getAllPublicMountainIds);
 router.get("/mnts/:id", mountainCtrl.getPublicMountain);
-router.post("/mnts", keycloak.protect(), mountainCtrl.addPublicMountain);
+router.post("/mnts", 
+  keycloak.protect(), 
+  [
+    // Validate name: letters (including umlauts), numbers, spaces and single quotes
+    body('name')
+      .matches(/^[a-zA-ZäöüÄÖÜ0-9\s']+$/)
+      .withMessage('Name must contain only letters, numbers, spaces, and single quotes'),
+    
+    // Validate elevation: integer value
+    body('elevation')
+      .isInt()
+      .withMessage('Elevation must be an integer value'),
+    
+    // Validate longitude: floating point number between -180.0 and 180.0
+    body('longitude')
+      .isFloat({ min: -180.0, max: 180.0 })
+      .withMessage('Longitude must be a number between -180.0 and 180.0'),
+    
+    // Validate latitude: floating point number between -90.0 and 90.0
+    body('latitude')
+      .isFloat({ min: -90.0, max: 90.0 })
+      .withMessage('Latitude must be a number between -90.0 and 90.0')
+  ],
+  mountainCtrl.addPublicMountain);
 router.put("/mnts/:id", keycloak.protect(), mountainCtrl.updatePublicMountain);
 router.put("/mnts/:mntid/img", upload, mountainCtrl.addPublicMountainImage);
 router.delete('/mnts/:id', mountainCtrl.deletePublicMountain);
@@ -59,5 +85,8 @@ router.get('/avatars', miscCtrl.getAvatars);
 
 // for testing purpose only, not used by frontend application
 router.get('/images', miscCtrl.getImage);
+
+// Statistics route protected by Keycloak
+router.get('/statistics/:elevationLevel', keycloak.protect(), mountainCtrl.calculateStatistics);
 
 module.exports = router;

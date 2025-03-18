@@ -45,7 +45,7 @@ async function createMountain(mountainData) {
     console.log("createMountain: ", mnt);
     return mnt;
   } catch (err) {
-    alert(err.message, "error");
+    alert(err.error.msg, "error");
   }
 }
 
@@ -103,4 +103,20 @@ async function deleteMountain(mountainId) {
   }
 }
 
-export default { loadMountainList, loadMountain, createMountain, updateMountain, uploadMountainImage, deleteMountain };
+async function getStatistics(elevationLevel) {
+  try {
+    let token = AuthService.getToken();
+    let res = await axios.get(`${backendHost}/statistics/${elevationLevel}`, {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return res.data;
+  } catch (err) {
+    console.error("Error fetching statistics:", err);
+    throw err;
+  }
+}
+
+export default { loadMountainList, loadMountain, createMountain, updateMountain, uploadMountainImage, deleteMountain, getStatistics };

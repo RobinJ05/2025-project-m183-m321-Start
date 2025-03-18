@@ -120,8 +120,9 @@ api.use((err, req, res, next) => {
     error: err,
   });
   const status = err.statusCode || 500;
+  // Send a generic error message to the client instead of the actual error details
   res.status(status).json({
-    errorMessage: err.message,
+    errorMessage: status === 500 ? 'An internal server error occurred. Please try again later.' : err.message,
   });
 });
 
