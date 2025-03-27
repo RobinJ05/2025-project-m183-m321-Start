@@ -1,5 +1,8 @@
 # Dependencies
 node_modules/
+rabbitmq-sub-file/node_modules
+rabbitmq-sub-print/node_modules
+log_exchange_robin/node_modules
 .pnp
 .pnp.js
 
