@@ -45,7 +45,7 @@ async function createMountain(mountainData) {
     console.log("createMountain: ", mnt);
     return mnt;
   } catch (err) {
-    alert(err.error.msg, "error");
+    alert(err.message, "error");
   }
 }
 

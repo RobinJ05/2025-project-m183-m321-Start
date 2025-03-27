@@ -1,0 +1,17 @@
+{
+  "name": "rabbitmq-sub-file",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "Mountain events file logger subscriber",
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "fs-extra": "^11.2.0",
+    "moment": "^2.30.1"
+  }
+}

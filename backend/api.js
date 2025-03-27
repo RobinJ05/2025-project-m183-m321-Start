@@ -6,6 +6,9 @@ require("dotenv").config();
 // cookie parser for handling cookies
 const cookieParser = require('cookie-parser');
 
+// security middleware
+const helmet = require('helmet');
+
 // module for handling http requests and responses and managing routes
 const express = require("express");
 
@@ -38,6 +41,13 @@ const { STATIC_DIR, JWTSECTRET, USE_SESSION_HANDLING } = require("./util/const")
 const { keycloak } = require('./config/keycloak-config');
 
 const api = express();
+
+// Use helmet middleware for security headers with explicit X-Frame-Options configuration
+api.use(helmet({
+  frameguard: { action: 'DENY' } // Set X-Frame-Options to DENY to prevent clickjacking
+}));
+
+api.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
 // initialize body-parser for JSON-format
 api.use(express.json());

@@ -1,0 +1,12 @@
+{
+  "name": "rabbitmq-sub-print",
+  "version": "1.0.0",
+  "description": "Mountain events console display subscriber",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3"
+  }
+}

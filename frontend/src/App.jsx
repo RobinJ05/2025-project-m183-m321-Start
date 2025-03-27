@@ -17,7 +17,7 @@ function App() {
   const menuIdRegister = 'menuIdRegister';
   const menuIdAddMountain = 'menuIdAddMountain';
   const menuIdStatistics = 'menuIdStatistics';
-  const ELEVATION_THRESHOLD = 2000; // Configurable elevation threshold in meters
+  const ELEVATION_THRESHOLD = 3000; // Configurable elevation threshold in meters
   const [selectedItem, setSelectedItem] = useState(menuIdHome);
   
   const [mountains, setMountains] = useState([]);

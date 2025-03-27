@@ -3,6 +3,7 @@ const path = require("path");
 const glob = require("glob");
 const logger = require('../util/log');
 const { validationResult } = require('express-validator');
+const { addMountainLog, editMountainLog, deleteMountainLog } = require('../util/loggingEvents');
 
 const { isEmpty } = require("../util/helper");
 const Mountain = require("../models/mountain");
@@ -127,6 +128,14 @@ exports.addPublicMountain = async (req, res, next) => {
       latitude: req.body.latitude,
       hasmountainrailway: req.body.hasmountainrailway
     });
+    
+    // Log the mountain creation
+    await addMountainLog({
+      name: mountain.name,
+      el: mountain.elevation,
+      mountainrailway: mountain.hasmountainrailway
+    });
+    
     res.status(HTTP_STATUS_CREATED).json(toGeoFeatureObj(mountain));
     console.log("addPublicMountain end with Id: ", mountain.id);
   } catch (err) {
@@ -163,6 +172,14 @@ exports.updatePublicMountain = async (req, res, next) => {
         mnt.hasmountainrailway = req.body.hasmountainrailway;
       }
       await mnt.save();
+      
+      // Log the mountain update
+      await editMountainLog({
+        name: mnt.name,
+        el: mnt.elevation,
+        mountainrailway: mnt.hasmountainrailway
+      });
+      
       httpStatus = HTTP_STATUS_OK;
     }
     res.status(httpStatus).json(toGeoFeatureObj(mnt));
@@ -232,6 +249,22 @@ exports.deletePublicMountain = async (req, res, next) => {
       });
 
       if (countDeletedMnt != 0) {
+        const mnt = await Mountain.findOne({
+          where: {
+            userId: { [Op.is]: null },
+            id: mntId,
+          },
+        });
+        
+        // Log the mountain deletion
+        if (mnt) {
+          await deleteMountainLog({
+            name: mnt.name,
+            el: mnt.elevation,
+            mountainrailway: mnt.hasmountainrailway
+          });
+        }
+        
         httpStatus = HTTP_STATUS_OK;
         removeImage(mntId);
       }

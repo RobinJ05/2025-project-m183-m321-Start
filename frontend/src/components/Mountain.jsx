@@ -4,7 +4,8 @@ import './mountain.css';
 import mountainService from '../services/mountainService';
 import AuthService from '../services/authenticationService';
 
-const Mountain = ({ selectedMountain }) => {
+const Mountain = ({ selectedMountain, setSelectedItem }) => {
+    const [error, setError] = useState('');
     const [formData, setFormData] = useState({
         id: selectedMountain ? selectedMountain.id : null,
         name: selectedMountain ? selectedMountain.name : '',
@@ -41,8 +42,8 @@ const Mountain = ({ selectedMountain }) => {
                 const success = await mountainService.deleteMountain(formData.id);
                 if (success) {
                     await AuthService.updateToken(() => {
-                window.location.href = '/home';
-            });
+                    setSelectedItem('menuIdHome');
+                });
                 }
             } catch (error) {
                 console.error('Error deleting mountain:', error);
@@ -87,11 +88,19 @@ const Mountain = ({ selectedMountain }) => {
             });
 
             await AuthService.updateToken(() => {
-                window.location.href = '/home';
+                setSelectedItem('menuIdHome');
             });
         } catch (error) {
             console.error('Error saving mountain:', error);
-            alert('Fehler beim Speichern des Berges');
+            let errorMessage = 'Fehler beim Speichern des Berges';
+            if (error.response?.status === 422 && error.response?.data?.errors) {
+                errorMessage = error.response.data.errors.map(err => err.msg).join('\n');
+            } else if (error.response?.data?.error?.msg) {
+                errorMessage = error.response.data.error.msg;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            setError(errorMessage);
         }
     };
 
@@ -164,6 +173,23 @@ const Mountain = ({ selectedMountain }) => {
                 onChange={handleInputChange}
                 accept="image/*"
             />
+            {error && (
+                <div style={{
+                    backgroundColor: '#ffebee',
+                    border: '1px solid #ef5350',
+                    borderRadius: '4px',
+                    padding: '12px',
+                    marginBottom: '15px',
+                    color: '#c62828',
+                    fontSize: '14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <span style={{ marginRight: '8px' }}>⚠️</span>
+                    {error}
+                </div>
+            )}
             <button type="submit">
                 {formData.id ? 'Berg aktualisieren' : 'Berg hinzufügen'}
             </button>
