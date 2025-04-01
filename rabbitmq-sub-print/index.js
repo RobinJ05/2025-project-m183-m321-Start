@@ -34,7 +34,7 @@ class EventBuffer {
 }
 
 // Create event buffer with capacity of 15
-const eventBuffer = new EventBuffer(15);
+const eventBuffer = new EventBuffer(2);
 
 // Connect to RabbitMQ and start consuming messages
 async function startSubscriber() {
