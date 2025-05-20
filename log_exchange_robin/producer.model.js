@@ -9,7 +9,7 @@ class ProducerModel {
 
     async connect() {
         try {
-            this.connection = await amqp.connect('amqp://localhost');
+            this.connection = await amqp.connect('amqp://rabbitmq:5672');
             this.channel = await this.connection.createChannel();
             await this.channel.assertExchange(this.exchangeName, 'fanout', {
                 durable: false

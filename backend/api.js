@@ -209,6 +209,7 @@ api.use((err, req, res, next) => {
       error: err,
     });
   } finally {
+    console.log("Start listening on port 3000");
     api.listen(3000);
   }
 })();

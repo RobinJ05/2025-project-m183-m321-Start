@@ -1,7 +1,7 @@
 const amqp = require('amqplib');
 
 // RabbitMQ connection settings
-const RABBITMQ_URL = 'amqp://localhost';
+const RABBITMQ_URL = `amqp://${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`;
 const EXCHANGE_NAME = 'log_exchange_robin';
 
 // Circular buffer to store the last 15 events

@@ -2,7 +2,11 @@ import axios from 'axios';
 
 import AuthService from './authenticationService.js';
 
-const backendHost = import.meta.env.VITE_BACKEND;
+let backendHost = import.meta.env.VITE_BACKEND;
+//if(process.env.CONTAINERISED === "true")
+  //backendHost = `${process.env.API_HOST}:${process.env.API_PORT}`;
+
+//console.log(process.env);
 
 async function loadMountainList() {
   try {

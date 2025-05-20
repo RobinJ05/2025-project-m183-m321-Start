@@ -4,7 +4,7 @@ const moment = require('moment');
 const path = require('path');
 
 // RabbitMQ connection settings
-const RABBITMQ_URL = 'amqp://localhost';
+const RABBITMQ_URL = `amqp://${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`;
 const EXCHANGE_NAME = 'log_exchange_robin';
 
 // Directory for log files

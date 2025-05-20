@@ -1,29 +1,40 @@
 services:
-  frontend:
-    build:
-      context: .
-      dockerfile: ./frontend/Dockerfile
-    container_name: 2025-mnts-frontend
-    ports:
-      - 5173:5173
-    environment:
-      - VITE_HOST=0.0.0.0  # noetig fuer Zugriff auf den Container
-  backend:
-    build:
-      context: .
-      dockerfile: ./backend/Dockerfile
-    container_name: 2025-mnts-backend
-    ports:
-      - 3000:3000
-    environment:
-      - NODE_DBDIALECT=mysql
-      - NODE_DBHOST=host.docker.internal
-      - NODE_DBPORT=3306
-      - NODE_DBUSER=root
-      - NODE_DBPWD=root
-      - NODE_DBSCHEMA=2025-mnts
-      - NODE_DBSYNC=true
-      - NODE_HOST=http://localhost:3000
+  # frontend:
+  #   build:
+  #     context: .
+  #     dockerfile: ./frontend/Dockerfile
+  #   container_name: 2025-mnts-frontend
+  #   ports:
+  #     - 5173:5173
+  #   environment:
+  #     - VITE_HOST=0.0.0.0 # noetig fuer Zugriff auf den Container
+  #     - API_HOST=backend
+  #     - API_PORT=3000
+  #     - CONTAINERISED=true
+  #   networks:
+  #     - m183-321-network
+  #   hostname: frontend
+
+  # backend:
+  #   build:
+  #     context: .
+  #     dockerfile: ./backend/Dockerfile
+  #   container_name: 2025-mnts-backend
+  #   ports:
+  #     - 3000:3000
+  #   environment:
+  #     - NODE_DBDIALECT=mysql
+  #     - NODE_DBHOST=host.docker.internal
+  #     - NODE_DBPORT=3306
+  #     - NODE_DBUSER=root
+  #     - NODE_DBPWD=root
+  #     - NODE_DBSCHEMA=2025-mnts
+  #     - NODE_DBSYNC=true
+  #     - NODE_HOST=http://localhost:3000
+  #   networks:
+  #     - m183-321-network
+  #   hostname: backend
+
   db:
     image: mysql:8
     platform: linux/amd64
@@ -35,13 +46,114 @@ services:
       - MYSQL_DATABASE=2025-mnts
       - MYSQL_TCP_PORT=3306
     volumes:
-      - ./database-content:/var/lib/mysql   
-      # Mount SQL script schema-sampledata.sql: All scripts in this container directory are executed automatically 
+      - ./database-content:/var/lib/mysql
+      # Mount SQL script schema-sampledata.sql: All scripts in this container directory are executed automatically
       # when the container is created
       # the database-directory must be empty in order to execute the script
-      - ./sql:/docker-entrypoint-initdb.d  
+      - ./sql:/docker-entrypoint-initdb.d
+    networks:
+      - m183-321-network
+
   adminer:
     image: adminer
     restart: always
     ports:
-      - 8087:8080   
+      - 8087:8080
+    networks:
+      - m183-321-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1.2
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: ["start-dev"]
+    ports:
+      - "8089:8080"
+    volumes:
+      - ./keycloak-content:/opt/keycloak/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: 2025-mnts-rabbitmq
+    ports:
+      - "5672:5672" # RabbitMQ default port
+      - "15672:15672" # RabbitMQ management UI
+    networks:
+      - m183-321-network
+    hostname: rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  rabbitexchange:
+    build:
+      context: .
+      dockerfile: ./log_exchange_robin/Dockerfile
+    container_name: 2025-mnts-rabbitExchange
+    networks:
+      - m183-321-network
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "3001:3001"
+    hostname: rabbitExchange
+    restart: unless-stopped
+
+  rabbitsublog:
+    build:
+      context: .
+      dockerfile: ./rabbitmq-sub-file/Dockerfile
+    container_name: 2025-mnts-rabbitSubLog
+    networks:
+      - m183-321-network
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  rabbitsubcli:
+    build:
+      context: .
+      dockerfile: ./rabbitmq-sub-print/Dockerfile
+    container_name: 2025-mnts-rabbitSubCli
+    networks:
+      - m183-321-network
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 9090:9090
+    networks:
+      - m183-321-network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+
+
+networks:
+  m183-321-network:
+    driver: bridge
+    name: m183-321-network
