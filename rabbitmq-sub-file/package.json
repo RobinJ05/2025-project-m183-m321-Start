@@ -11,7 +11,9 @@
   "description": "Mountain events file logger subscriber",
   "dependencies": {
     "amqplib": "^0.10.3",
+    "express": "^5.1.0",
     "fs-extra": "^11.2.0",
-    "moment": "^2.30.1"
+    "moment": "^2.30.1",
+    "prom-client": "^15.1.3"
   }
 }

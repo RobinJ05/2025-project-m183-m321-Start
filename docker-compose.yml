@@ -121,6 +121,7 @@ services:
       rabbitmq:
         condition: service_healthy
     restart: unless-stopped
+    hostname: rabbitSubFile
 
   rabbitsubcli:
     build:
@@ -136,6 +137,7 @@ services:
       rabbitmq:
         condition: service_healthy
     restart: unless-stopped
+    hostname: rabbitSubCli
 
   prometheus:
     image: prom/prometheus
@@ -151,6 +153,20 @@ services:
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
+    hostname: prometheus
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3005:3000"  # Map internal 3000 to host port 3005
+    volumes:
+      - ./grafana-content:/var/lib/grafana
+    networks:
+      - m183-321-network
+    depends_on:
+      - prometheus
+
 
 
 networks:

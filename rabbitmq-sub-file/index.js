@@ -2,6 +2,30 @@ const amqp = require('amqplib');
 const fs = require('fs-extra');
 const moment = require('moment');
 const path = require('path');
+const promclient = require('prom-client');
+const express = require('express');
+
+const app = express();
+app.use(express.json());
+
+const register = promclient.register;
+
+promclient.collectDefaultMetrics();
+app.get('/metrics', async (req, res) => {
+    try {
+      res.set('Content-Type', register.contentType);
+      res.end(await register.metrics());
+    } catch (ex) {
+      res.status(500).end(ex);
+    }
+  });
+  
+  const PORT = 3001;
+  app.listen(PORT, () => {
+      console.log(`RabbitSubFile server is running on port ${PORT}`);
+  });
+
+
 
 // RabbitMQ connection settings
 const RABBITMQ_URL = `amqp://${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`;
