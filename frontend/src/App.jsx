@@ -30,6 +30,7 @@ function App() {
   const [selectedMountain, setSelectedMountain] = useState(null);
   const [statistics, setStatistics] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRoles, setUserRoles] = useState([]);
 
   const fetchStatistics = async () => {
     try {
@@ -65,6 +66,18 @@ function App() {
       const isLoggedIn = AuthService.isLoggedIn();
       setIsAuthenticated(isLoggedIn);
       if (isLoggedIn) {
+        // Get roles from token
+        const token = AuthService.getToken();
+        let roles = [];
+        if (token) {
+          try {
+            const parsed = JSON.parse(atob(token.split('.')[1]));
+            roles = parsed.realm_access?.roles || [];
+          } catch (e) {
+            console.error('Failed to parse token for roles', e);
+          }
+        }
+        setUserRoles(roles);
         fetchStatistics();
       }
     }); 
@@ -89,13 +102,15 @@ function App() {
 
   // Update menu items based on authentication state
 
+  const canSeeStatistics = isAuthenticated && userRoles.includes('statistics');
+
   const availableMenuItems = [
     { name: 'Home', id: menuIdHome },
     { name: 'Login', id: menuIdLogin },
     { name: 'Registrieren', id: menuIdRegister },
     ...(isAuthenticated ? [
       { name: 'Berg hinzufügen', id: menuIdAddMountain },
-      { name: 'Statistiken', id: menuIdStatistics }
+      ...(canSeeStatistics ? [{ name: 'Statistiken', id: menuIdStatistics }] : [])
     ] : [])
   ];
 
@@ -110,7 +125,7 @@ function App() {
           <Login />)
       }
       {selectedItem === menuIdRegister && <Register />}
-      {selectedItem === menuIdStatistics && isAuthenticated && <Statistics statistics={statistics} />}
+      {selectedItem === menuIdStatistics && canSeeStatistics && <Statistics statistics={statistics} />}
     </div>
   )
 }
