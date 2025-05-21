@@ -22,7 +22,11 @@ function App() {
   
   const [mountains, setMountains] = useState([]);
   const [loading, setLoading] = useState(true);
-  const useKeycloak = true; // Flag to determine which login component to use
+
+
+  const useKeycloak = true; // Flag to determine which login component to use also change backend
+
+
   const [selectedMountain, setSelectedMountain] = useState(null);
   const [statistics, setStatistics] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
