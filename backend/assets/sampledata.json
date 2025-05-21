@@ -11,6 +11,7 @@
         "properties": {
           "id": 1,
           "name": "Eiger",
+          "description": "Description Eiger",
           "el": 3967,
           "url": "",
           "img": "eiger.jpg",
@@ -26,6 +27,7 @@
         "properties": {
           "id": 2,
           "name": "Monte Generoso",
+          "description": "Description Monte Generoso",
           "el": 1701,
           "url": "",
           "img": "generoso.jpg",
@@ -41,6 +43,7 @@
         "properties": {
           "id": 3,
           "name": "Matterhorn",
+          "description": "Description Matterhorn",
           "el": 4477,
           "url": "",
           "img": "matterhorn.jpg",
@@ -56,6 +59,7 @@
         "properties": {
           "id": 4,
           "name": "Bristen",
+          "description": "Description Bristen",
           "el": 3073,
           "url": "",
           "img": "bristen.jpg",
@@ -71,6 +75,7 @@
         "properties": {
           "id": 5,
           "name": "Niederhorn",
+          "description": "Description Niederhorn",
           "el": 1963,
           "url": "",
           "img": "niederhorn.jpg",
@@ -86,6 +91,7 @@
         "properties": {
           "id": 6,
           "name": "Piz Bernina",
+          "description": "Description Piz Bernina",
           "el": 4049,
           "url": "",
           "img": "pizbernina.jpg",
@@ -101,6 +107,7 @@
         "properties": {
           "id": 7,
           "name": "Rigi",
+          "description": "Description Rigi",
           "el": 1798,
           "url": "",
           "img": "rigi.jpg",
@@ -116,6 +123,7 @@
         "properties": {
           "id": 8,
           "name": "Säntis",
+          "description": "Description Säntis",
           "el": 2502,
           "url": "",
           "img": "santis.jpg",
@@ -131,6 +139,7 @@
         "properties": {
           "id": 9,
           "name": "Titlis",
+          "description": "Description Titlis",
           "el": 3238,
           "url": "",
           "img": "titlis.jpg",
@@ -146,6 +155,7 @@
         "properties": {
           "id": 10,
           "name": "Tödi",
+          "description": "Description Tödi",
           "el": 3614,
           "url": "",
           "img": "todi.jpg",
@@ -161,6 +171,7 @@
         "properties": {
           "id": 11,
           "name": "Tschingelhörner",
+          "description": "Description Tschingelhörner",
           "el": 2849,
           "url": "",
           "img": "tschingelhorner.jpg",
@@ -176,6 +187,7 @@
         "properties": {
           "id": 12,
           "name": "Uetliberg",
+          "description": "Description Uetliberg",
           "el": 870,
           "url": "",
           "img": "uetliberg.jpg",
@@ -191,6 +203,7 @@
         "properties": {
           "id": 13,
           "name": "Glärnisch",
+          "description": "Description Glärnisch",
           "el": 2914,
           "url": "",
           "img": "glarnisch.jpg",
@@ -206,6 +219,7 @@
         "properties": {
           "id": 14,
           "name": "Stockhorn",
+          "description": "Description Stockhorn",
           "el": 2190,
           "url": "",
           "img": "stockhorn.jpg",
@@ -221,6 +235,7 @@
         "properties": {
           "id": 15,
           "name": "Grand Combin",
+          "description": "Description Grand Combin",
           "el": 4314,
           "url": "",
           "img": "grandcombin.jpg",
@@ -236,6 +251,7 @@
         "properties": {
           "id": 16,
           "name": "Piz Beverin",
+          "description": "Description Piz Beverin",
           "el": 2998,
           "url": "",
           "img": "pizbeverin.jpg",

@@ -7,6 +7,9 @@ Mountain.init(
     name: {
       type: DataTypes.STRING,
     },
+    description: {
+      type: DataTypes.STRING,
+    },
     longitude: {
       type: DataTypes.FLOAT,
     },

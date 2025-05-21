@@ -13,7 +13,8 @@ const Mountain = ({ selectedMountain, setSelectedItem }) => {
         longitude: selectedMountain ? selectedMountain.geometry.coordinates[0] : '',
         latitude: selectedMountain ? selectedMountain.geometry.coordinates[1] : '',
         hasmountainrailway: selectedMountain ? selectedMountain.mountainrailway : false,
-        image: null
+        image: null,
+        description: selectedMountain && selectedMountain.description ? selectedMountain.description : ''
     });
 
     const handleInputChange = (e) => {
@@ -61,7 +62,8 @@ const Mountain = ({ selectedMountain, setSelectedItem }) => {
                 elevation: parseFloat(formData.elevation),
                 longitude: parseFloat(formData.longitude),
                 latitude: parseFloat(formData.latitude),
-                hasmountainrailway: formData.hasmountainrailway
+                hasmountainrailway: formData.hasmountainrailway,
+                description: formData.description
             };
 
             let mountain;
@@ -84,7 +86,8 @@ const Mountain = ({ selectedMountain, setSelectedItem }) => {
                 longitude: '',
                 latitude: '',
                 hasmountainrailway: false,
-                image: null
+                image: null,
+                description: ''
             });
 
             await AuthService.updateToken(() => {
@@ -131,6 +134,13 @@ const Mountain = ({ selectedMountain, setSelectedItem }) => {
                 onChange={handleInputChange}
                 placeholder="Name des Berges"
                 required
+            />
+            <input
+                type="text"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Beschreibung (optional, kann Link enthalten)"
             />
             <input
                 type="number"
@@ -193,6 +203,23 @@ const Mountain = ({ selectedMountain, setSelectedItem }) => {
             <button type="submit">
                 {formData.id ? 'Berg aktualisieren' : 'Berg hinzufügen'}
             </button>
+        
+        {selectedMountain && selectedMountain.description && (
+            <div style={{ marginTop: '20px', wordBreak: 'break-word' }}>
+                <strong>Beschreibung:</strong>{' '}
+                {(() => {
+                    const urlRegex = /(https?:\/\/[^\s]+)/g;
+                    const parts = selectedMountain.description.split(urlRegex);
+                    return parts.map((part, idx) =>
+                        urlRegex.test(part) ? (
+                            <a key={idx} href={part} target="_blank" rel="noopener noreferrer">{part}</a>
+                        ) : (
+                            <span key={idx}>{part}</span>
+                        )
+                    );
+                })()}
+            </div>
+        )}
         </form>
     );
 };

@@ -34,6 +34,7 @@ function toGeoFeatureObj(resultSet) {
         ? undefined
         : `${process.env.NODE_HOST}/${resultSet.image}`,
       mountainrailway: resultSet.hasmountainrailway,
+      description: resultSet.description,
     };
   }
   return mnt;
@@ -170,6 +171,9 @@ exports.updatePublicMountain = async (req, res, next) => {
       }
       if (!isEmpty(req.body.hasmountainrailway)) {
         mnt.hasmountainrailway = req.body.hasmountainrailway;
+      }
+      if (!isEmpty(req.body.description)) {
+        mnt.description = req.body.description;
       }
       await mnt.save();
       

@@ -161,11 +161,12 @@ api.use((err, req, res, next) => {
           await Mountain.create({
             id: mountain.properties.id,
             name: mountain.properties.name,
-            image: mountain.properties.img,
-            elevation: mountain.properties.el,
-            hasmountainrailway: mountain.properties.mountainrailway,
+            description: mountain.properties.description,
             longitude: mountain.geometry.coordinates[0],
             latitude: mountain.geometry.coordinates[1],
+            elevation: mountain.properties.el,
+            hasmountainrailway: mountain.properties.mountainrailway,
+            image: mountain.properties.img,
           });
         }
         // load sample users
